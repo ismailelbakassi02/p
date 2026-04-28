@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { NAVY, NATURE_JURIDIQUE_MAP } from "../constants.js";
 import { codeToForme, formeToSelect } from "../utils.jsx";
 import { L, I } from "./UI.jsx";
+import Icon from "./Icon.jsx";
 
 export default function GouvSearch({ form, onFill }) {
   const [query, setQuery] = useState(form.nomEntreprise || "");
@@ -71,8 +72,9 @@ export default function GouvSearch({ form, onFill }) {
     <div style={{ gridColumn: "1/-1", marginBottom: "13px" }} ref={ref}>
       <label style={L}>
         Nom de l'entreprise
-        <span style={{ color: "#16a34a", fontWeight: 600, textTransform: "none", marginLeft: "8px", fontSize: "11px" }}>
-          🏛 Données INSEE officielles — gratuit, sans clé
+        <span style={{ color: "#16a34a", fontWeight: 600, textTransform: "none", marginLeft: "8px", fontSize: "11px", display: "inline-flex", alignItems: "center", gap: "4px", verticalAlign: "middle" }}>
+          <Icon name="Building2" size={11} color="#16a34a" strokeWidth={1.75} />
+          Données INSEE officielles — gratuit, sans clé
         </span>
       </label>
 

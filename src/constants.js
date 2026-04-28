@@ -20,37 +20,37 @@ export const CDI_SUBTYPES = [
 // ─── Clauses & benefits ──────────────────────────────────────────────────────
 
 export const CLAUSES_LIST = [
-  { id: "confidentialite",  label: "Confidentialité",         icon: "🔒" },
-  { id: "non_divulgation",  label: "Non-divulgation",         icon: "🤫" },
-  { id: "non_concurrence",  label: "Non-concurrence",         icon: "🚫" },
-  { id: "objectifs",        label: "Objectifs",               icon: "🎯" },
-  { id: "mobilite",         label: "Mobilité géographique",   icon: "🗺" },
-  { id: "astreinte",        label: "Astreinte",               icon: "📟" },
-  { id: "exclusivite",      label: "Exclusivité",             icon: "⭐" },
-  { id: "dedit_formation",  label: "Dédit-formation",         icon: "📚" },
+  { id: "confidentialite",  label: "Confidentialité",         icon: "Lock" },
+  { id: "non_divulgation",  label: "Non-divulgation",         icon: "EyeOff" },
+  { id: "non_concurrence",  label: "Non-concurrence",         icon: "Ban" },
+  { id: "objectifs",        label: "Objectifs",               icon: "Target" },
+  { id: "mobilite",         label: "Mobilité géographique",   icon: "MapPin" },
+  { id: "astreinte",        label: "Astreinte",               icon: "Bell" },
+  { id: "exclusivite",      label: "Exclusivité",             icon: "Star" },
+  { id: "dedit_formation",  label: "Dédit-formation",         icon: "BookOpen" },
 ];
 
 export const AVANTAGES_LIST = [
-  { id: "vehicule",   label: "Véhicule de société",          icon: "🚗" },
-  { id: "repas",      label: "Panier repas / Tickets resto", icon: "🍽️" },
-  { id: "logement",   label: "Logement de fonction",         icon: "🏠" },
-  { id: "telephone",  label: "Téléphone professionnel",      icon: "📱" },
-  { id: "ordinateur", label: "Ordinateur / Matériel",        icon: "💻" },
-  { id: "mutuelle",   label: "Mutuelle / Prévoyance",        icon: "🏥" },
+  { id: "vehicule",   label: "Véhicule de société",          icon: "Car" },
+  { id: "repas",      label: "Panier repas / Tickets resto", icon: "Utensils" },
+  { id: "logement",   label: "Logement de fonction",         icon: "Home" },
+  { id: "telephone",  label: "Téléphone professionnel",      icon: "Smartphone" },
+  { id: "ordinateur", label: "Ordinateur / Matériel",        icon: "Laptop" },
+  { id: "mutuelle",   label: "Mutuelle / Prévoyance",        icon: "HeartPulse" },
 ];
 
 // ─── Avenant types ────────────────────────────────────────────────────────────
 
 export const AVENANT_TYPES = [
-  { value: "renouvellement_cdd",  label: "Renouvellement CDD",                  icon: "📅", desc: "Prolongation d'un CDD existant" },
-  { value: "augmentation_salaire",label: "Augmentation de salaire / primes",    icon: "💶", desc: "Modification de la rémunération ou primes" },
-  { value: "augmentation_duree",  label: "Modification durée / horaires",       icon: "⏱️", desc: "Changement du temps de travail" },
-  { value: "changement_poste",    label: "Changement de poste / qualification", icon: "📋", desc: "Nouvelle fonction ou qualification" },
-  { value: "mutation",            label: "Mutation / Lieu de travail",          icon: "📍", desc: "Changement de lieu d'affectation" },
-  { value: "clauses",             label: "Ajout / suppression de clauses",      icon: "📝", desc: "Non-concurrence, confidentialité, exclusivité…" },
-  { value: "periode_essai",       label: "Prolongation période d'essai",        icon: "⏳", desc: "CDI uniquement – prolongation de la période d'essai" },
-  { value: "avantages_nature",    label: "Modification avantages en nature",    icon: "🎁", desc: "Ajout, retrait ou modification d'avantages" },
-  { value: "forfait_jours",       label: "Passage au forfait jours",            icon: "📆", desc: "Cadres autonomes – passage en jours/an" },
+  { value: "renouvellement_cdd",  label: "Renouvellement CDD",                  icon: "CalendarDays", desc: "Prolongation d'un CDD existant" },
+  { value: "augmentation_salaire",label: "Augmentation de salaire / primes",    icon: "TrendingUp",   desc: "Modification de la rémunération ou primes" },
+  { value: "augmentation_duree",  label: "Modification durée / horaires",       icon: "Clock",        desc: "Changement du temps de travail" },
+  { value: "changement_poste",    label: "Changement de poste / qualification", icon: "Briefcase",    desc: "Nouvelle fonction ou qualification" },
+  { value: "mutation",            label: "Mutation / Lieu de travail",          icon: "MapPin",       desc: "Changement de lieu d'affectation" },
+  { value: "clauses",             label: "Ajout / suppression de clauses",      icon: "FileEdit",     desc: "Non-concurrence, confidentialité, exclusivité…" },
+  { value: "periode_essai",       label: "Prolongation période d'essai",        icon: "Timer",        desc: "CDI uniquement – prolongation de la période d'essai" },
+  { value: "avantages_nature",    label: "Modification avantages en nature",    icon: "Gift",         desc: "Ajout, retrait ou modification d'avantages" },
+  { value: "forfait_jours",       label: "Passage au forfait jours",            icon: "Calendar",     desc: "Cadres autonomes – passage en jours/an" },
 ];
 
 // ─── Conventions collectives ─────────────────────────────────────────────────
@@ -83,21 +83,21 @@ export const CONVENTIONS = [
 // ─── Document types ───────────────────────────────────────────────────────────
 
 export const DOCUMENT_TYPES = [
-  { value: "cni_fr",              label: "🇫🇷 Carte nationale d'identité française (CNI)",                         eea: true },
-  { value: "passeport_fr",        label: "🇫🇷 Passeport français",                                                 eea: true },
-  { value: "cni_ue",              label: "🇪🇺 Carte d'identité UE / EEE / Suisse",                                 eea: true },
-  { value: "passeport_ue",        label: "🇪🇺 Passeport UE / EEE / Suisse",                                        eea: true },
-  { value: "passeport_etranger",  label: "🌍 Passeport étranger (hors UE)",                                        eea: false },
-  { value: "cs_salarie",          label: "🪪 Carte de séjour « Salarié »",                                         eea: false },
-  { value: "cs_travailleur_temp", label: "🪪 Carte de séjour « Travailleur temporaire »",                          eea: false },
-  { value: "cs_etudiant",         label: "🪪 Carte de séjour « Étudiant »",                                        eea: false },
-  { value: "cs_resident",         label: "🪪 Carte de séjour « Résident »",                                        eea: false },
-  { value: "cs_resident_ld",      label: "🪪 Carte de séjour « Résident longue durée-UE »",                        eea: false },
-  { value: "cs_passeport_talent", label: "🪪 Carte de séjour « Passeport talent »",                                eea: false },
-  { value: "cs_recherche_emploi", label: "🪪 Carte de séjour « Recherche d'emploi / création d'entreprise »",     eea: false },
-  { value: "vls_ts",              label: "🪪 VLS-TS (Visa Long Séjour valant Titre de Séjour)",                    eea: false },
-  { value: "titre_voyage",        label: "📄 Titre de voyage (réfugié / apatride)",                                eea: false },
-  { value: "autre",               label: "📄 Autre document",                                                      eea: false },
+  { value: "cni_fr",              label: "Carte nationale d'identité française (CNI)",                        eea: true },
+  { value: "passeport_fr",        label: "Passeport français",                                                eea: true },
+  { value: "cni_ue",              label: "Carte d'identité UE / EEE / Suisse",                                eea: true },
+  { value: "passeport_ue",        label: "Passeport UE / EEE / Suisse",                                       eea: true },
+  { value: "passeport_etranger",  label: "Passeport étranger (hors UE)",                                      eea: false },
+  { value: "cs_salarie",          label: "Carte de séjour — Salarié",                                         eea: false },
+  { value: "cs_travailleur_temp", label: "Carte de séjour — Travailleur temporaire",                          eea: false },
+  { value: "cs_etudiant",         label: "Carte de séjour — Étudiant",                                        eea: false },
+  { value: "cs_resident",         label: "Carte de séjour — Résident",                                        eea: false },
+  { value: "cs_resident_ld",      label: "Carte de séjour — Résident longue durée-UE",                        eea: false },
+  { value: "cs_passeport_talent", label: "Carte de séjour — Passeport talent",                                eea: false },
+  { value: "cs_recherche_emploi", label: "Carte de séjour — Recherche d'emploi / création d'entreprise",     eea: false },
+  { value: "vls_ts",              label: "VLS-TS (Visa Long Séjour valant Titre de Séjour)",                  eea: false },
+  { value: "titre_voyage",        label: "Titre de voyage (réfugié / apatride)",                              eea: false },
+  { value: "autre",               label: "Autre document",                                                    eea: false },
 ];
 
 // ─── Nationalities ────────────────────────────────────────────────────────────
@@ -213,7 +213,9 @@ export const initAvenant = {
 
 // ─── Theme ────────────────────────────────────────────────────────────────────
 
-export const NAVY = "#1e3a5f";
+export const NAVY   = "#1e3a5f";   // medium navy — borders, secondary text
+export const DARK   = "#0D1B2E";   // deep navy — header background, badge backgrounds
+export const ACCENT = "#00E676";   // bright green — CTAs, active states, progress
 
 // ─── Nature juridique code → label mapping (INSEE) ───────────────────────────
 

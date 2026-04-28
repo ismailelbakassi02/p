@@ -1,12 +1,11 @@
-// Banner that prompts the user for their Anthropic API key.
-// The key is stored in localStorage so it persists across page reloads.
 import { useState } from "react";
-import { NAVY } from "../constants.js";
+import { NAVY, DARK, ACCENT } from "../constants.js";
+import Icon from "./Icon.jsx";
 
 export default function ApiKeyBanner({ onKey }) {
   const stored = localStorage.getItem("anthropic_api_key") || "";
   const [key, setKey] = useState(stored);
-  const [show, setShow] = useState(!stored); // hide banner once a key is saved
+  const [show, setShow] = useState(!stored);
   const [visible, setVisible] = useState(false);
 
   const save = () => {
@@ -22,22 +21,22 @@ export default function ApiKeyBanner({ onKey }) {
     setShow(true);
   };
 
-  // Already configured — show a small indicator with a reset option
   if (!show) return (
-    <div style={{ marginBottom: "14px", display: "flex", alignItems: "center", gap: "10px", padding: "8px 14px", background: "#f0fdf4", border: "1.5px solid #86efac", borderRadius: "10px", fontSize: "12px" }}>
-      <span style={{ color: "#166534", fontWeight: 700 }}>✓ Clé API Anthropic configurée</span>
+    <div style={{ marginBottom: "14px", display: "flex", alignItems: "center", gap: "10px", padding: "8px 14px", background: "rgba(0,230,118,0.07)", border: `1.5px solid ${ACCENT}`, borderRadius: "10px", fontSize: "12px" }}>
+      <Icon name="ShieldCheck" size={15} color="#065f46" strokeWidth={1.75} />
+      <span style={{ color: "#065f46", fontWeight: 700 }}>Clé API Anthropic configurée</span>
       <button onClick={clear} style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", fontSize: "11px", textDecoration: "underline" }}>Modifier</button>
     </div>
   );
 
-  // No key yet — show setup form
   return (
     <div style={{ marginBottom: "18px", padding: "16px 18px", background: "#fefce8", border: "1.5px solid #fde68a", borderRadius: "12px" }}>
-      <div style={{ fontWeight: 700, color: "#854d0e", fontSize: "13px", marginBottom: "6px" }}>
-        🔑 Clé API Anthropic requise
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: 700, color: "#854d0e", fontSize: "13px", marginBottom: "6px" }}>
+        <Icon name="KeyRound" size={15} color="#854d0e" strokeWidth={1.75} />
+        Clé API Anthropic requise
       </div>
       <div style={{ fontSize: "12px", color: "#92400e", marginBottom: "12px" }}>
-        La génération des contrats utilise l'IA Claude. Entrez votre clé API (elle est stockée localement, jamais envoyée ailleurs).
+        La génération utilise l'IA Claude. Entrez votre clé API (stockée localement uniquement).
       </div>
       <div style={{ display: "flex", gap: "8px" }}>
         <div style={{ position: "relative", flex: 1 }}>
@@ -49,11 +48,11 @@ export default function ApiKeyBanner({ onKey }) {
             placeholder="sk-ant-…"
             style={{ width: "100%", background: "#fff", border: "1.5px solid #fde68a", borderRadius: "8px", padding: "9px 36px 9px 12px", fontSize: "13px", color: "#0f172a", outline: "none", boxSizing: "border-box" }}
           />
-          <button onClick={() => setVisible(v => !v)} style={{ position: "absolute", right: "8px", top: "50%", transform: "translateY(-50%)", background: "transparent", border: "none", cursor: "pointer", fontSize: "14px", color: "#94a3b8" }}>
-            {visible ? "🙈" : "👁"}
+          <button onClick={() => setVisible(v => !v)} style={{ position: "absolute", right: "10px", top: "50%", transform: "translateY(-50%)", background: "transparent", border: "none", cursor: "pointer", color: "#94a3b8", display: "flex" }}>
+            <Icon name={visible ? "EyeOff" : "Eye"} size={15} strokeWidth={1.75} />
           </button>
         </div>
-        <button onClick={save} style={{ padding: "9px 18px", background: NAVY, border: "none", borderRadius: "8px", color: "#fff", fontSize: "13px", fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+        <button onClick={save} style={{ padding: "9px 18px", background: DARK, border: "none", borderRadius: "8px", color: "#fff", fontSize: "13px", fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
           Enregistrer
         </button>
       </div>

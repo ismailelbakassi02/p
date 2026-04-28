@@ -1,14 +1,15 @@
 // 6-step wizard for generating a new employment contract (CDI or CDD)
 import { useState, useRef } from "react";
 import {
-  NAVY, CDD_SUBTYPES, CDI_SUBTYPES, CLAUSES_LIST, AVANTAGES_LIST,
+  NAVY, ACCENT, DARK, CDD_SUBTYPES, CDI_SUBTYPES, CLAUSES_LIST, AVANTAGES_LIST,
   DOCUMENT_TYPES, NATIONALITIES, EEA_LIST, initContract,
 } from "../constants.js";
 import { generateContract } from "../templates.js";
 import { parseText } from "../parser.js";
-import { Field, Sel, SearchSelect, CCNField, STitle, ToggleCard } from "./UI.jsx";
+import { Field, Sel, SearchSelect, CCNField, STitle, ToggleCard, StepBar } from "./UI.jsx";
 import GouvSearch from "./GouvSearch.jsx";
 import DocDisplay from "./DocDisplay.jsx";
+import Icon from "./Icon.jsx";
 
 const OCR_KEY = "K83007226988957";
 
@@ -109,8 +110,8 @@ function DocTypeSelect({ form, onChange }) {
         {open && (
           <div style={{ position: "absolute", zIndex: 200, top: "calc(100% + 4px)", left: 0, right: 0, background: "#fff", border: "1.5px solid #e2e8f0", borderRadius: "10px", boxShadow: "0 8px 24px rgba(0,0,0,0.12)", maxHeight: "240px", overflowY: "auto" }}>
             {[
-              { group: "🇫🇷 / 🇪🇺 Documents français & UE", items: filtered.filter(d => d.eea) },
-              { group: "🌍 Documents étrangers / Titres de séjour", items: filtered.filter(d => !d.eea) },
+              { group: "Documents français & UE", items: filtered.filter(d => d.eea) },
+              { group: "Documents étrangers / Titres de séjour", items: filtered.filter(d => !d.eea) },
             ].map(g => g.items.length > 0 && (
               <div key={g.group}>
                 <div style={{ padding: "6px 14px", fontSize: "10px", fontWeight: 800, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.08em", background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>{g.group}</div>
@@ -129,7 +130,7 @@ function DocTypeSelect({ form, onChange }) {
       </div>
       {selected && (
         <div style={{ marginTop: "6px", padding: "6px 12px", borderRadius: "6px", fontSize: "11.5px", fontWeight: 600, background: selected.eea ? "#f0fdf4" : "#eff6ff", color: selected.eea ? "#166534" : NAVY, border: `1px solid ${selected.eea ? "#86efac" : "#bfdbfe"}` }}>
-          {selected.eea ? "✓ Document UE/EEE — Pas d'autorisation de travail requise" : "⚠ Document hors UE — Vérifier l'autorisation de travail"}
+          <Icon name={selected.eea ? "CheckCircle" : "AlertTriangle"} size={13} strokeWidth={1.75} color={selected.eea ? "#166534" : NAVY} />{selected.eea ? " Document UE/EEE — Pas d'autorisation de travail requise" : " Document hors UE — Vérifier l'autorisation de travail"}
         </div>
       )}
     </div>
@@ -141,7 +142,7 @@ function ForeignWorkerAlert() {
   return (
     <div style={{ gridColumn: "1/-1", background: "#fff1f2", border: "2px solid #f87171", borderRadius: "12px", padding: "16px 18px", marginBottom: "4px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-        <span style={{ fontSize: "18px" }}>🚨</span>
+        <Icon name="AlertOctagon" size={18} color="#b91c1c" strokeWidth={2} />
         <span style={{ fontWeight: 800, color: "#b91c1c", fontSize: "14px", textTransform: "uppercase", letterSpacing: "0.04em" }}>Salarié étranger hors UE/EEE — Obligations légales</span>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: "5px", marginBottom: "12px" }}>
@@ -153,13 +154,13 @@ function ForeignWorkerAlert() {
           { titre: "Carte « Recherche d'emploi »", regle: "Autorisé si salaire ≥ 2 734,55 €." },
         ].map((c, i) => (
           <div key={i} style={{ background: "#fff", border: "1.5px solid #fca5a5", borderRadius: "8px", padding: "8px 12px" }}>
-            <div style={{ fontSize: "12px", fontWeight: 700, color: "#1e3a5f", marginBottom: "2px" }}>🪪 {c.titre}</div>
+            <div style={{ fontSize: "12px", fontWeight: 700, color: "#1e3a5f", marginBottom: "2px", display: "flex", alignItems: "center", gap: "6px" }}><Icon name="CreditCard" size={12} strokeWidth={1.75} color="#1e3a5f" /> {c.titre}</div>
             <div style={{ fontSize: "11.5px", color: "#374151", lineHeight: 1.5 }}>{c.regle}</div>
           </div>
         ))}
       </div>
       <div style={{ background: "#450a0a", borderRadius: "9px", padding: "11px 14px" }}>
-        <p style={{ fontSize: "12px", fontWeight: 800, color: "#fca5a5", margin: "0 0 5px", textTransform: "uppercase" }}>🚫 Sanctions (Loi immigration jan. 2024)</p>
+        <p style={{ fontSize: "12px", fontWeight: 800, color: "#fca5a5", margin: "0 0 5px", textTransform: "uppercase", display: "flex", alignItems: "center", gap: "6px" }}><Icon name="Ban" size={13} strokeWidth={2} color="#fca5a5" /> Sanctions (Loi immigration jan. 2024)</p>
         <p style={{ fontSize: "12px", color: "#fecaca", margin: 0, lineHeight: 1.7 }}>
           Amende jusqu'à <strong style={{ color: "#fca5a5" }}>20 750 € par travailleur</strong> non autorisé.<br />
           Réduite à <strong style={{ color: "#fca5a5" }}>8 300 €</strong> si salaires versés.<br />
@@ -322,7 +323,9 @@ export default function ContractFlow() {
           onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer?.files?.[0]; if (f) importFromPDF(f); }}
           onClick={() => !importing && fileRef.current?.click()}
           style={{ marginBottom: "18px", borderRadius: "12px", padding: "14px 18px", border: `2px dashed ${dragOver ? NAVY : importing ? "#93c5fd" : "#cbd5e1"}`, background: dragOver ? "#eff6ff" : importing ? "#f0f9ff" : "#f8fafc", transition: "all 0.2s", cursor: importing ? "default" : "pointer", display: "flex", alignItems: "center", gap: "14px" }}>
-          <div style={{ fontSize: "28px", flexShrink: 0 }}>{importing ? "⏳" : "📄"}</div>
+          <div style={{ flexShrink: 0, color: importing ? NAVY : "#94a3b8", display: "flex" }}>
+            <Icon name={importing ? "Loader2" : "FileUp"} size={26} strokeWidth={1.5} style={importing ? { animation: "slide 1.4s ease-in-out infinite" } : {}} />
+          </div>
           <div style={{ flex: 1 }}>
             {importing ? (
               <>
@@ -345,44 +348,39 @@ export default function ContractFlow() {
 
       {importStatus === "error" && (
         <div style={{ marginBottom: "16px", background: "#fff1f2", border: "1.5px solid #fca5a5", borderRadius: "10px", padding: "12px 16px", display: "flex", alignItems: "center", gap: "10px" }}>
-          <span style={{ fontSize: "18px" }}>❌</span>
+          <Icon name="XCircle" size={18} color="#b91c1c" strokeWidth={1.75} />
           <div><div style={{ fontWeight: 700, color: "#b91c1c", fontSize: "13px" }}>Impossible de lire ce fichier</div><div style={{ fontSize: "12px", color: "#64748b" }}>Vérifiez que le fichier est lisible et non protégé.</div></div>
-          <button onClick={() => setImportStatus(null)} style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", fontSize: "18px" }}>×</button>
+          <button onClick={() => setImportStatus(null)} style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", display: "flex" }}><Icon name="X" size={16} strokeWidth={2} /></button>
         </div>
       )}
       {importStatus === "empty" && (
         <div style={{ marginBottom: "16px", background: "#fefce8", border: "1.5px solid #fde68a", borderRadius: "10px", padding: "12px 16px", display: "flex", alignItems: "center", gap: "10px" }}>
-          <span style={{ fontSize: "18px" }}>⚠️</span>
+          <Icon name="AlertTriangle" size={18} color="#854d0e" strokeWidth={1.75} />
           <div style={{ fontSize: "12.5px", color: "#854d0e" }}>Aucune information reconnue dans ce document. Remplissez le formulaire manuellement.</div>
-          <button onClick={() => setImportStatus(null)} style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", fontSize: "18px" }}>×</button>
+          <button onClick={() => setImportStatus(null)} style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", display: "flex" }}><Icon name="X" size={16} strokeWidth={2} /></button>
         </div>
       )}
 
       {importStatus === "success" && (
         <div style={{ marginBottom: "16px", background: "#f0fdf4", border: "1.5px solid #86efac", borderRadius: "10px", padding: "12px 16px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-            <span style={{ fontSize: "16px" }}>✅</span>
+            <Icon name="CheckCircle" size={16} color="#166534" strokeWidth={1.75} />
             <span style={{ fontWeight: 700, color: "#166534", fontSize: "13px" }}>{importedFields.length} champs pré-remplis depuis «&nbsp;{importFileName}&nbsp;»</span>
-            <button onClick={() => { setImportStatus(null); setImportedFields([]); }} style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", fontSize: "18px" }}>×</button>
+            <button onClick={() => { setImportStatus(null); setImportedFields([]); }} style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", display: "flex" }}><Icon name="X" size={16} strokeWidth={2} /></button>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
             {importedFields.map(f => <span key={f} style={{ background: "#dcfce7", color: "#166534", padding: "2px 9px", borderRadius: "999px", fontSize: "11px", fontWeight: 600 }}>{f}</span>)}
           </div>
-          <button onClick={() => fileRef.current?.click()} style={{ marginTop: "10px", background: "transparent", border: "1px solid #86efac", borderRadius: "6px", color: "#166534", fontSize: "11px", fontWeight: 600, cursor: "pointer", padding: "5px 12px" }}>📄 Importer un autre fichier</button>
+          <button onClick={() => fileRef.current?.click()} style={{ marginTop: "10px", background: "transparent", border: "1px solid #86efac", borderRadius: "6px", color: "#166534", fontSize: "11px", fontWeight: 600, cursor: "pointer", padding: "5px 12px", display: "inline-flex", alignItems: "center", gap: "5px" }}>
+            <Icon name="Upload" size={11} strokeWidth={1.75} /> Importer un autre fichier
+          </button>
         </div>
       )}
 
       <style>{`@keyframes slide { 0%{transform:translateX(-100%)} 100%{transform:translateX(200%)} }`}</style>
 
       {/* Progress bar */}
-      <div style={{ display: "flex", gap: "5px", marginBottom: "22px" }}>
-        {STEPS.map((s, i) => (
-          <div key={s} style={{ flex: 1 }}>
-            <div style={{ height: "3px", borderRadius: "3px", marginBottom: "5px", background: i <= step ? NAVY : "#e2e8f0", transition: "background 0.3s" }} />
-            <div style={{ fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: i <= step ? NAVY : "#94a3b8", textAlign: "center" }}>{s}</div>
-          </div>
-        ))}
-      </div>
+      <StepBar steps={STEPS} current={step} />
 
       {/* ── Step 0: Type ── */}
       {step === 0 && (
@@ -405,13 +403,13 @@ export default function ContractFlow() {
                   <span style={{ fontSize: "11.5px", color: "#94a3b8", marginLeft: "8px" }}>{sub.desc}</span>
                 </div>
                 {sub.maxDuration && form.sousType === sub.value && <span style={{ fontSize: "10px", background: "#fef9c3", color: "#854d0e", padding: "2px 8px", borderRadius: "999px", fontWeight: 700, whiteSpace: "nowrap" }}>{sub.maxDuration}</span>}
-                {form.sousType === sub.value && <span style={{ color: NAVY, fontWeight: 800 }}>✓</span>}
+                {form.sousType === sub.value && <Icon name="Check" size={15} strokeWidth={2.5} color={NAVY} />}
               </button>
             ))}
           </div>
           {form.typeContrat === "CDD" && (
             <div style={{ marginTop: "14px", background: "#fefce8", border: "1.5px solid #fde68a", borderRadius: "10px", padding: "11px 14px", fontSize: "12px", color: "#854d0e" }}>
-              ⚠️ Un CDD peut être renouvelé deux fois sans dépasser 18 mois au total.
+              <span style={{ display: "flex", alignItems: "center", gap: "7px" }}><Icon name="AlertTriangle" size={13} color="#854d0e" strokeWidth={1.75} /> Un CDD peut être renouvelé deux fois sans dépasser 18 mois au total.</span>
             </div>
           )}
         </div>
@@ -423,8 +421,8 @@ export default function ContractFlow() {
           <STitle num="02">Informations employeur</STitle>
           {pappersFilledFrom && (
             <div style={{ marginBottom: "14px", background: "#f0fdf4", border: "1.5px solid #86efac", borderRadius: "10px", padding: "10px 14px", display: "flex", alignItems: "center", gap: "8px", fontSize: "12.5px", color: "#166534", fontWeight: 600 }}>
-              ✓ Données pré-remplies depuis INSEE : <strong>{pappersFilledFrom}</strong>
-              <button onClick={() => setPappersFilledFrom("")} style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", fontSize: "16px" }}>×</button>
+              <Icon name="CheckCircle" size={14} color="#166534" strokeWidth={1.75} /> Données pré-remplies depuis INSEE : <strong>{pappersFilledFrom}</strong>
+              <button onClick={() => setPappersFilledFrom("")} style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", display: "flex" }}><Icon name="X" size={15} strokeWidth={2} /></button>
             </div>
           )}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 14px" }}>
@@ -454,7 +452,9 @@ export default function ContractFlow() {
             onDrop={e => { e.preventDefault(); setSalDrag(false); const f = e.dataTransfer?.files?.[0]; if (f) importSalarie(f); }}
             onClick={() => !salImporting && salFileRef.current?.click()}
             style={{ marginBottom: "14px", borderRadius: "12px", padding: "13px 16px", border: `2px dashed ${salDrag ? NAVY : salImporting ? "#93c5fd" : "#cbd5e1"}`, background: salDrag ? "#eff6ff" : salImporting ? "#f0f9ff" : "#f8fafc", display: "flex", alignItems: "center", gap: "12px", cursor: salImporting ? "default" : "pointer", transition: "all 0.2s" }}>
-            <div style={{ fontSize: "24px" }}>{salImporting ? "⏳" : "🪪"}</div>
+            <div style={{ color: salImporting ? NAVY : "#94a3b8", display: "flex" }}>
+              <Icon name={salImporting ? "Loader2" : "CreditCard"} size={22} strokeWidth={1.5} style={salImporting ? { animation: "slide 1.4s ease-in-out infinite" } : {}} />
+            </div>
             <div style={{ flex: 1 }}>
               {salImporting ? (
                 <>
@@ -480,9 +480,9 @@ export default function ContractFlow() {
           {salStatus === "success" && (
             <div style={{ marginBottom: "14px", background: "#f0fdf4", border: "1.5px solid #86efac", borderRadius: "10px", padding: "10px 14px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "7px" }}>
-                <span>✅</span>
+                <Icon name="CheckCircle" size={16} color="#166534" strokeWidth={1.75} />
                 <span style={{ fontWeight: 700, color: "#166534", fontSize: "13px" }}>{salFields.length} champs pré-remplis depuis «&nbsp;{salFileName}&nbsp;»</span>
-                <button onClick={() => setSalStatus(null)} style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", fontSize: "18px" }}>×</button>
+                <button onClick={() => setSalStatus(null)} style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", display: "flex" }}><Icon name="X" size={15} strokeWidth={2} /></button>
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
                 {salFields.map(f => <span key={f} style={{ background: "#dcfce7", color: "#166534", padding: "2px 9px", borderRadius: "999px", fontSize: "11px", fontWeight: 600 }}>{f}</span>)}
@@ -491,16 +491,16 @@ export default function ContractFlow() {
           )}
           {salStatus === "error" && (
             <div style={{ marginBottom: "14px", background: "#fff1f2", border: "1.5px solid #fca5a5", borderRadius: "10px", padding: "10px 14px", display: "flex", gap: "10px", alignItems: "center" }}>
-              <span>❌</span>
+              <Icon name="XCircle" size={18} color="#b91c1c" strokeWidth={1.75} />
               <div><div style={{ fontWeight: 700, color: "#b91c1c", fontSize: "13px" }}>Lecture impossible</div><div style={{ fontSize: "12px", color: "#64748b" }}>Fichier protégé ou format non supporté.</div></div>
-              <button onClick={() => setSalStatus(null)} style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", fontSize: "18px" }}>×</button>
+              <button onClick={() => setSalStatus(null)} style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", display: "flex" }}><Icon name="X" size={15} strokeWidth={2} /></button>
             </div>
           )}
           {salStatus === "empty" && (
             <div style={{ marginBottom: "14px", background: "#fefce8", border: "1.5px solid #fde68a", borderRadius: "10px", padding: "10px 14px", display: "flex", gap: "10px", alignItems: "center" }}>
-              <span>⚠️</span>
+              <Icon name="AlertTriangle" size={18} color="#854d0e" strokeWidth={1.75} />
               <div style={{ fontSize: "12.5px", color: "#854d0e" }}>Aucune information salarié trouvée dans ce document.</div>
-              <button onClick={() => setSalStatus(null)} style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", fontSize: "18px" }}>×</button>
+              <button onClick={() => setSalStatus(null)} style={{ marginLeft: "auto", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", display: "flex" }}><Icon name="X" size={15} strokeWidth={2} /></button>
             </div>
           )}
 
@@ -566,7 +566,7 @@ export default function ContractFlow() {
         <div>
           <STitle num="06">Récapitulatif</STitle>
           <div style={{ background: "#eff6ff", borderRadius: "10px", padding: "12px 16px", marginBottom: "16px", display: "flex", gap: "10px", alignItems: "center" }}>
-            <span style={{ fontSize: "18px" }}>📋</span>
+            <Icon name="ClipboardList" size={18} color={NAVY} strokeWidth={1.75} />
             <div>
               <div style={{ fontWeight: 700, color: NAVY, fontSize: "14px" }}>{form.typeContrat} – {subTypeObj.label}</div>
               <div style={{ fontSize: "12px", color: "#64748b" }}>{form.formeJuridique} {form.nomEntreprise} · {form.prenom} {form.nom}</div>
@@ -586,10 +586,10 @@ export default function ContractFlow() {
               <span style={{ fontSize: "13px", color: "#0f172a", fontWeight: 600 }}>{v || "—"}</span>
             </div>
           ))}
-          {clauseLabels.length > 0 && <div style={{ marginTop: "10px", padding: "9px 12px", background: "#fefce8", borderRadius: "8px", border: "1px solid #fde68a", fontSize: "12px", color: "#92400e" }}>📋 {clauseLabels.join(", ")}</div>}
-          {avantageLabels.length > 0 && <div style={{ marginTop: "7px", padding: "9px 12px", background: "#f0fdf4", borderRadius: "8px", border: "1px solid #86efac", fontSize: "12px", color: "#166534" }}>🎁 {avantageLabels.join(", ")}</div>}
-          <button onClick={generate} disabled={loading} style={{ marginTop: "20px", width: "100%", padding: "14px", background: loading ? "#e2e8f0" : NAVY, border: "none", borderRadius: "10px", color: loading ? "#94a3b8" : "#fff", fontSize: "14px", fontWeight: 700, cursor: loading ? "not-allowed" : "pointer" }}>
-            {loading ? "⏳ Génération en cours…" : "✦ Générer le contrat"}
+          {clauseLabels.length > 0 && <div style={{ marginTop: "10px", padding: "9px 12px", background: "#fefce8", borderRadius: "8px", border: "1px solid #fde68a", fontSize: "12px", color: "#92400e", display: "flex", alignItems: "center", gap: "7px" }}><Icon name="ClipboardList" size={13} color="#92400e" strokeWidth={1.75} /> {clauseLabels.join(", ")}</div>}
+          {avantageLabels.length > 0 && <div style={{ marginTop: "7px", padding: "9px 12px", background: "#f0fdf4", borderRadius: "8px", border: "1px solid #86efac", fontSize: "12px", color: "#166534", display: "flex", alignItems: "center", gap: "7px" }}><Icon name="Gift" size={13} color="#166534" strokeWidth={1.75} /> {avantageLabels.join(", ")}</div>}
+          <button onClick={generate} disabled={loading} style={{ marginTop: "20px", width: "100%", padding: "14px", background: loading ? "#e2e8f0" : ACCENT, border: "none", borderRadius: "10px", color: loading ? "#94a3b8" : DARK, fontSize: "14px", fontWeight: 800, cursor: loading ? "not-allowed" : "pointer", letterSpacing: "0.02em", transition: "all 0.2s" }}>
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>{loading ? <><Icon name="Loader2" size={15} strokeWidth={2} style={{ animation: "spin 1s linear infinite" }} /> Génération en cours…</> : <><Icon name="Wand2" size={15} strokeWidth={1.75} /> Générer le contrat</>}</span>
           </button>
         </div>
       )}

@@ -1,11 +1,14 @@
 // 3-step wizard for generating an amendment (avenant) to an existing contract
 import { useState } from "react";
 import {
-  NAVY, AVENANT_TYPES, CLAUSES_LIST, AVANTAGES_LIST, initAvenant,
+  NAVY, ACCENT, DARK, AVENANT_TYPES, CLAUSES_LIST, AVANTAGES_LIST, initAvenant,
 } from "../constants.js";
 import { generateAvenant } from "../templates.js";
-import { Field, Sel, Toggle, STitle } from "./UI.jsx";
+import { Field, Sel, Toggle, STitle, StepBar } from "./UI.jsx";
 import DocDisplay from "./DocDisplay.jsx";
+import Icon from "./Icon.jsx";
+
+const AVN_STEPS = ["Type", "Société & Salarié", "Modifications"];
 
 export default function AvenantFlow() {
   const [step, setStep] = useState(0);
@@ -50,6 +53,8 @@ export default function AvenantFlow() {
 
   return (
     <div>
+      <StepBar steps={AVN_STEPS} current={step} />
+
       {/* ── Step 0: Avenant type ── */}
       {step === 0 && (
         <div>
@@ -228,7 +233,7 @@ export default function AvenantFlow() {
             <Field label="Date de signature" name="dateSignature" form={form} onChange={handleChange} type="date" colSpan />
           </div>
 
-          <button onClick={generate} disabled={loading} style={{ marginTop: "18px", width: "100%", padding: "14px", background: loading ? "#e2e8f0" : NAVY, border: "none", borderRadius: "10px", color: loading ? "#94a3b8" : "#fff", fontSize: "14px", fontWeight: 700, cursor: loading ? "not-allowed" : "pointer" }}>
+          <button onClick={generate} disabled={loading} style={{ marginTop: "18px", width: "100%", padding: "14px", background: loading ? "#e2e8f0" : ACCENT, border: "none", borderRadius: "10px", color: loading ? "#94a3b8" : DARK, fontSize: "14px", fontWeight: 800, cursor: loading ? "not-allowed" : "pointer", letterSpacing: "0.02em", transition: "all 0.2s" }}>
             {loading ? "⏳ Génération en cours…" : "✦ Générer l'avenant"}
           </button>
         </div>

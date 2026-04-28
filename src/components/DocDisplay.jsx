@@ -4,8 +4,9 @@ import {
   Document, Packer, Paragraph, TextRun, AlignmentType,
   UnderlineType, BorderStyle,
 } from "docx";
-import { NAVY } from "../constants.js";
+import { NAVY, DARK, ACCENT } from "../constants.js";
 import { renderContract } from "../utils.jsx";
+import Icon from "./Icon.jsx";
 
 // ─── Convert markdown-like contract text → docx Paragraph array ──────────────
 function contractToDocxParagraphs(text) {
@@ -141,15 +142,18 @@ export default function DocDisplay({ text, onCopy, onReset, copied }) {
     <div>
       {/* Action bar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", gap: "8px", flexWrap: "wrap" }}>
-        <span style={{ color: "#0f172a", fontWeight: 700, fontSize: "16px" }}>✦ Document généré</span>
+        <span style={{ color: "#0f172a", fontWeight: 700, fontSize: "15px", display: "flex", alignItems: "center", gap: "8px" }}>
+          <Icon name="FileText" size={16} color={NAVY} strokeWidth={1.75} />
+          Document généré
+        </span>
         <div style={{ display: "flex", gap: "8px" }}>
-          {/* Copy button */}
-          <button onClick={onCopy} style={{ padding: "8px 14px", border: `1.5px solid ${copied ? "#16a34a" : NAVY}`, borderRadius: "6px", background: copied ? "#f0fdf4" : "transparent", color: copied ? "#16a34a" : NAVY, fontSize: "12px", fontWeight: 700, cursor: "pointer", transition: "all 0.2s" }}>
-            {copied ? "✓ Copié !" : "Copier texte"}
+          <button onClick={onCopy} style={{ padding: "8px 14px", border: `1.5px solid ${copied ? ACCENT : "#e2e8f0"}`, borderRadius: "6px", background: copied ? "rgba(0,230,118,0.08)" : "transparent", color: copied ? "#065f46" : "#64748b", fontSize: "12px", fontWeight: 700, cursor: "pointer", transition: "all 0.2s", display: "flex", alignItems: "center", gap: "6px" }}>
+            <Icon name={copied ? "Check" : "Copy"} size={13} strokeWidth={copied ? 2.5 : 1.75} />
+            {copied ? "Copié" : "Copier"}
           </button>
-          {/* DOCX download button */}
-          <button onClick={downloadDocx} disabled={downloading} style={{ padding: "8px 16px", border: "none", borderRadius: "6px", background: downloading ? "#e2e8f0" : NAVY, color: downloading ? "#94a3b8" : "#fff", fontSize: "12px", fontWeight: 700, cursor: downloading ? "not-allowed" : "pointer", transition: "all 0.2s", display: "flex", alignItems: "center", gap: "6px" }}>
-            {downloading ? "⏳ Génération…" : "⬇ Télécharger .docx"}
+          <button onClick={downloadDocx} disabled={downloading} style={{ padding: "8px 16px", border: "none", borderRadius: "6px", background: downloading ? "#e2e8f0" : ACCENT, color: downloading ? "#94a3b8" : DARK, fontSize: "12px", fontWeight: 800, cursor: downloading ? "not-allowed" : "pointer", transition: "all 0.2s", display: "flex", alignItems: "center", gap: "7px" }}>
+            <Icon name={downloading ? "Loader2" : "Download"} size={13} strokeWidth={1.75} style={downloading ? { animation: "docSpin 1s linear infinite" } : {}} />
+            {downloading ? "Génération…" : "Télécharger .docx"}
           </button>
         </div>
       </div>
@@ -160,7 +164,6 @@ export default function DocDisplay({ text, onCopy, onReset, copied }) {
           <div style={{ fontSize: "9px", fontWeight: 800, letterSpacing: "0.3em", color: NAVY, textTransform: "uppercase" }}>Document officiel</div>
         </div>
         {renderContract(text)}
-        {/* Signature lines preview */}
         <div style={{ marginTop: "36px", paddingTop: "18px", borderTop: "1px solid #e2e8f0", display: "flex", gap: "36px" }}>
           {["L'Employeur", "Le/La Salarié(e)"].map(l => (
             <div key={l} style={{ flex: 1, textAlign: "center" }}>
@@ -171,8 +174,10 @@ export default function DocDisplay({ text, onCopy, onReset, copied }) {
         </div>
       </div>
 
-      <button onClick={onReset} style={{ marginTop: "10px", width: "100%", padding: "13px", background: "transparent", border: "1.5px solid #e2e8f0", borderRadius: "10px", color: "#64748b", fontSize: "13px", fontWeight: 500, cursor: "pointer" }}>
-        ↺ Recommencer
+      <style>{`@keyframes docSpin { to { transform: rotate(360deg); } }`}</style>
+      <button onClick={onReset} style={{ marginTop: "10px", width: "100%", padding: "13px", background: "transparent", border: "1.5px solid #e2e8f0", borderRadius: "10px", color: "#64748b", fontSize: "13px", fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "7px" }}>
+        <Icon name="RotateCcw" size={13} strokeWidth={1.75} />
+        Recommencer
       </button>
     </div>
   );

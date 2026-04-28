@@ -1,6 +1,7 @@
-// Shared primitive UI components used across ContractFlow and AvenantFlow
+// Shared primitive UI components used across all flows
 import { useState, useRef, useEffect } from "react";
-import { NAVY, CONVENTIONS } from "../constants.js";
+import { NAVY, DARK, ACCENT, CONVENTIONS } from "../constants.js";
+import Icon from "./Icon.jsx";
 
 // Common label style
 export const L = {
@@ -17,7 +18,52 @@ export const I = {
   transition: "border-color 0.15s",
 };
 
-// Text / date input field
+// ─── Step progress bar with circles + connectors ──────────────────────────────
+export function StepBar({ steps, current }) {
+  return (
+    <div style={{ display: "flex", alignItems: "flex-start", marginBottom: "28px" }}>
+      {steps.map((s, i) => (
+        <div key={s} style={{ display: "flex", alignItems: "flex-start", flex: i < steps.length - 1 ? 1 : undefined }}>
+          {/* Circle + label */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px" }}>
+            <div style={{
+              width: "28px", height: "28px", borderRadius: "50%", flexShrink: 0,
+              background: i < current ? ACCENT : i === current ? DARK : "#e8edf4",
+              color: i < current ? DARK : i === current ? "#fff" : "#94a3b8",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontWeight: 800, fontSize: "11px",
+              boxShadow: i === current ? `0 0 0 4px rgba(0,230,118,0.18)` : "none",
+              transition: "all 0.25s",
+            }}>
+              {i < current
+                ? <Icon name="Check" size={13} strokeWidth={2.5} color={DARK} />
+                : <span>{i + 1}</span>}
+            </div>
+            <span style={{
+              fontSize: "8px", fontWeight: i === current ? 700 : 500,
+              color: i < current ? "#16a34a" : i === current ? DARK : "#94a3b8",
+              textTransform: "uppercase", letterSpacing: "0.07em",
+              textAlign: "center", lineHeight: 1.2, maxWidth: "52px",
+            }}>
+              {s}
+            </span>
+          </div>
+          {/* Connector line to next step */}
+          {i < steps.length - 1 && (
+            <div style={{
+              flex: 1, height: "2px",
+              background: i < current ? ACCENT : "#e2e8f0",
+              marginTop: "13px", minWidth: "6px",
+              transition: "background 0.3s",
+            }} />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Text / date input field ───────────────────────────────────────────────────
 export function Field({ label, name, form, onChange, type = "text", placeholder = "", colSpan, note }) {
   return (
     <div style={{ marginBottom: "13px", gridColumn: colSpan ? "1/-1" : undefined }}>
@@ -28,26 +74,31 @@ export function Field({ label, name, form, onChange, type = "text", placeholder 
       <input
         type={type} name={name} value={form[name] || ""} onChange={onChange}
         placeholder={placeholder} style={I}
-        onFocus={e => e.target.style.borderColor = NAVY}
+        onFocus={e => e.target.style.borderColor = ACCENT}
         onBlur={e => e.target.style.borderColor = "#e2e8f0"}
       />
     </div>
   );
 }
 
-// Select / dropdown field
+// ─── Select / dropdown field ───────────────────────────────────────────────────
 export function Sel({ label, name, form, onChange, options, colSpan }) {
   return (
     <div style={{ marginBottom: "13px", gridColumn: colSpan ? "1/-1" : undefined }}>
       <label style={L}>{label}</label>
-      <select name={name} value={form[name] || ""} onChange={onChange} style={{ ...I, cursor: "pointer" }}>
+      <select
+        name={name} value={form[name] || ""} onChange={onChange}
+        style={{ ...I, cursor: "pointer" }}
+        onFocus={e => e.target.style.borderColor = ACCENT}
+        onBlur={e => e.target.style.borderColor = "#e2e8f0"}
+      >
         {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
     </div>
   );
 }
 
-// Yes / No toggle
+// ─── Yes / No toggle ──────────────────────────────────────────────────────────
 export function Toggle({ label, name, form, onToggle }) {
   const val = form[name];
   return (
@@ -58,9 +109,10 @@ export function Toggle({ label, name, form, onToggle }) {
           <button key={t} onClick={() => onToggle(name, v)} style={{
             flex: 1, padding: "9px", borderRadius: "8px", cursor: "pointer",
             fontSize: "13px", fontWeight: 600,
-            border: `1.5px solid ${val === v ? NAVY : "#e2e8f0"}`,
-            background: val === v ? "#eff6ff" : "#fafafa",
-            color: val === v ? NAVY : "#64748b",
+            border: `1.5px solid ${val === v ? ACCENT : "#e2e8f0"}`,
+            background: val === v ? "rgba(0,230,118,0.08)" : "#fafafa",
+            color: val === v ? "#065f46" : "#64748b",
+            transition: "all 0.15s",
           }}>{t}</button>
         ))}
       </div>
@@ -68,35 +120,46 @@ export function Toggle({ label, name, form, onToggle }) {
   );
 }
 
-// Section title with numbered badge
-export function STitle({ num, children, style = {} }) {
+// ─── Section title with numbered badge ────────────────────────────────────────
+export function STitle({ num, children, style: extraStyle = {} }) {
   return (
-    <h2 style={{ margin: "0 0 18px", fontSize: "16px", color: "#0f172a", fontWeight: 700, display: "flex", alignItems: "center", gap: "10px", ...style }}>
-      <span style={{ background: NAVY, color: "#fff", borderRadius: "6px", padding: "2px 9px", fontSize: "12px", fontWeight: 700, flexShrink: 0 }}>{num}</span>
+    <h2 style={{ margin: "0 0 18px", fontSize: "15px", color: "#0f172a", fontWeight: 700, display: "flex", alignItems: "center", gap: "10px", ...extraStyle }}>
+      <span style={{
+        background: DARK, color: ACCENT,
+        borderRadius: "6px", padding: "2px 9px",
+        fontSize: "11px", fontWeight: 800, flexShrink: 0,
+        letterSpacing: "0.04em",
+      }}>{num}</span>
       {children}
     </h2>
   );
 }
 
-// Clickable clause / benefit toggle card
+// ─── Clickable clause / benefit toggle card ────────────────────────────────────
 export function ToggleCard({ item, selected, onToggle }) {
   const on = selected.includes(item.id);
   return (
     <button onClick={() => onToggle(item.id)} style={{
       textAlign: "left", padding: "11px 14px", borderRadius: "9px",
       cursor: "pointer", width: "100%",
-      border: `1.5px solid ${on ? NAVY : "#e2e8f0"}`,
-      background: on ? "#eff6ff" : "#fafafa",
-      transition: "all 0.15s", display: "flex", alignItems: "center", gap: "8px",
+      border: `1.5px solid ${on ? ACCENT : "#e2e8f0"}`,
+      background: on ? "rgba(0,230,118,0.07)" : "#fafafa",
+      transition: "all 0.15s", display: "flex", alignItems: "center", gap: "10px",
     }}>
-      <span style={{ fontSize: "16px" }}>{item.icon}</span>
-      <span style={{ fontSize: "13px", fontWeight: 700, color: on ? NAVY : "#374151" }}>{item.label}</span>
-      {on && <span style={{ marginLeft: "auto", color: NAVY, fontWeight: 800 }}>✓</span>}
+      <span style={{ color: on ? "#065f46" : "#94a3b8", flexShrink: 0, display: "flex" }}>
+        <Icon name={item.icon} size={15} strokeWidth={1.75} />
+      </span>
+      <span style={{ fontSize: "13px", fontWeight: 600, color: on ? "#065f46" : "#374151" }}>{item.label}</span>
+      {on && (
+        <span style={{ marginLeft: "auto", color: ACCENT, display: "flex", flexShrink: 0 }}>
+          <Icon name="Check" size={14} strokeWidth={2.5} />
+        </span>
+      )}
     </button>
   );
 }
 
-// Searchable nationality / generic dropdown
+// ─── Searchable nationality / generic dropdown ────────────────────────────────
 export function SearchSelect({ label, name, form, onChange, options, colSpan, placeholder }) {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
@@ -120,6 +183,7 @@ export function SearchSelect({ label, name, form, onChange, options, colSpan, pl
           onFocus={() => { setOpen(true); setSearch(""); }}
           onChange={e => setSearch(e.target.value)}
           style={{ ...I, paddingRight: "36px" }}
+          onBlurCapture={() => {}}
         />
         <span style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", color: "#94a3b8", fontSize: "12px", pointerEvents: "none" }}>▼</span>
         {open && (
@@ -127,7 +191,7 @@ export function SearchSelect({ label, name, form, onChange, options, colSpan, pl
             {filtered.map(o => (
               <div key={o} onClick={() => { onChange({ target: { name, value: o } }); setOpen(false); }}
                 style={{ padding: "10px 14px", fontSize: "13px", cursor: "pointer", color: "#0f172a", borderBottom: "1px solid #f1f5f9" }}
-                onMouseEnter={e => e.currentTarget.style.background = "#eff6ff"}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(0,230,118,0.07)"}
                 onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                 {o}
               </div>
@@ -140,7 +204,7 @@ export function SearchSelect({ label, name, form, onChange, options, colSpan, pl
   );
 }
 
-// Convention collective searchable field with manual fallback
+// ─── Convention collective searchable field ────────────────────────────────────
 export function CCNField({ form, onChange }) {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
@@ -181,7 +245,7 @@ export function CCNField({ form, onChange }) {
                 else { onChange({ target: { name: "convention", value: c } }); setOpen(false); }
               }}
                 style={{ padding: "10px 14px", fontSize: "13px", cursor: "pointer", color: "#0f172a", borderBottom: "1px solid #f1f5f9" }}
-                onMouseEnter={e => e.currentTarget.style.background = "#eff6ff"}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(0,230,118,0.07)"}
                 onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                 {c}
               </div>
